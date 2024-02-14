@@ -1,6 +1,12 @@
 <template>
   <div class="hello">
-    <h2 class="subtitle " >Adicionar Novo Produto:</h2>
+    <h1 class="subtitle">Adicione sua marca</h1>
+    <form @submit.prevent="adicionarMarca">
+      <label element class="marca" for="novaMarca">Nova Marca:</label>
+      <input  type="text" id="novaMarca" v-model="novaMarcaNome">
+      <button type="submit">Adicionar Marca</button>
+    </form>
+    <h1 class="subtitle " >Adicionar Novo Produto:</h1>
     <form @submit.prevent="adicionarProduto">
       <label element class="produto" for="novoProduto">Novo Produto:</label>
       <input  type="text" id="novoProduto" v-model="novoProdutoNome">
@@ -10,17 +16,17 @@
       </select>
       <button type="submit">Adicionar Produto</button>
     </form>
-    <h1 class="title">Lista de Marcas:</h1>
+    <h1 v-if="marcas.length" class="title">Lista de Marcas:</h1>
     <ul>
-      <li v-for="marca in marcas" :key="marca.id" >
+      <li v-for="marca in marcas" :key="marca.id" class="primeiraletramaiuscula">
         {{ marca.nome }}
       </li>
     </ul>
 
-    <h1 class="title">Lista de Produtos:</h1>
+    <h1 v-if="produtos.length" class="title">Lista de Produtos:</h1>
     <ul>
-      <li v-for="produto in produtos" :key="produto.id">
-        {{ produto.nome }} ({{ produto.marca_nome }})
+      <li v-for="produto in produtos" :key="produto.id" class="primeiraletramaiuscula">
+        {{ produto.nome_produto }} ({{ produto.nome_marca }})
       </li>
     </ul>
   </div>
@@ -75,6 +81,20 @@ export default {
       } else {
         alert('Por favor, preencha o nome do produto e selecione uma marca.');
       }
+    },
+    adicionarMarca() {
+      if (this.novaMarcaNome) {
+        axios.post('http://localhost:3000/marcas', { nome: this.novaMarcaNome })
+          .then(() => {
+            alert('Marca adicionada com sucesso!');
+            this.carregarMarcas(); 
+          }) 
+          .catch(error => {
+            console.error('Erro ao adicionar marca:', error);
+          });
+      } else {
+        alert('Por favor, preencha o nome da marca');
+      }
     }
   }
 };
@@ -106,6 +126,9 @@ button:hover {
 .title {
   color:#342B4B;
 
+}
+.primeiraletramaiuscula {
+  text-transform: capitalize;
 }
 .subtitle {
   color: #342B4B;
